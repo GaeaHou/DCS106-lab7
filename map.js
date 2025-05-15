@@ -41,7 +41,7 @@ const bikeLaneStyle = {
     // 添加 Cambridge 自行车道数据源
     map.addSource('cambridge_route', {
       type: 'geojson',
-      data: 'https://data.cambridgema.gov/api/geospatial/xyz123?method=export&format=GeoJSON', // 假设的链接
+      data: 'https://raw.githubusercontent.com/cambridgegis/cambridgegis_data/main/Recreation/Bike_Facilities/RECREATION_BikeFacilities.geojson',
     });
   
     // 添加 Cambridge 图层
