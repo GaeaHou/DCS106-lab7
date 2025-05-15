@@ -15,3 +15,39 @@ const map = new mapboxgl.Map({
   minZoom: 5, // Minimum allowed zoom
   maxZoom: 18, // Maximum allowed zoom
 });
+
+const bikeLaneStyle = {
+    'line-color': '#32D400',
+    'line-width': 5,
+    'line-opacity': 0.6,
+  };
+  
+  map.on('load', async () => {
+    // 添加 Boston 自行车道数据源
+    map.addSource('boston_route', {
+      type: 'geojson',
+      data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson',
+    });
+  
+    // 添加 Boston 图层
+    map.addLayer({
+      id: 'boston-bike-lanes',
+      type: 'line',
+      source: 'boston_route',
+      paint: bikeLaneStyle,  // 👈 复用样式
+    });
+  
+    // 添加 Cambridge 自行车道数据源
+    map.addSource('cambridge_route', {
+      type: 'geojson',
+      data: 'https://data.cambridgema.gov/api/geospatial/xyz123?method=export&format=GeoJSON', // 假设的链接
+    });
+  
+    // 添加 Cambridge 图层
+    map.addLayer({
+      id: 'cambridge-bike-lanes',
+      type: 'line',
+      source: 'cambridge_route',
+      paint: bikeLaneStyle,  // 👈 复用样式
+    });
+  });
