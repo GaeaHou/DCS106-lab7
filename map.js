@@ -79,27 +79,19 @@ map.on('load', async () => {
             station.totalTraffic = station.departures + station.arrivals;
             return station;
           });
-
-        const radiusScale = d3.scaleSqrt()
-          .domain([0, d3.max(stations, d => d.totalTraffic)])
-          .range([0, 25]);
     
         console.log('Loaded JSON Data:', jsonData); // Log to verify structure
           // 添加圆圈到 SVG
-          const circles = svg.selectAll('circle')
-          .data(stations)
-          .enter()
-          .append('circle')
-          .attr('r', d => radiusScale(d.totalTraffic))
-          .attr('fill', 'steelblue')
-          .attr('stroke', 'white')
-          .attr('stroke-width', 1)
-          .attr('fill-opacity', 0.6)
-          .each(function (d) {
-            d3.select(this)
-              .append('title')
-              .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
-          });
+        const circles = svg
+        .selectAll('circle')
+        .data(stations)
+        .enter()
+        .append('circle')
+        .attr('r', 5)
+        .attr('fill', 'steelblue')
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1)
+        .attr('opacity', 0.8);
 
         // 定义位置更新函数
         function updatePositions() {
