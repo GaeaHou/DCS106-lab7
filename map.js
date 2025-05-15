@@ -115,11 +115,18 @@ map.on('load', async () => {
     .data(stations)
     .enter()
     .append('circle')
-    .attr('r', (d) => radiusScale(d.totalTraffic)) // variable size
-    .attr('fill', 'steelblue')                    // fill color
-    .attr('stroke', 'white')                      // white border
-    .attr('stroke-width', 1)                      // border thickness
-    .attr('opacity', 0.8);                        // transparency
+    .attr('r', (d) => radiusScale(d.totalTraffic))
+    .attr('fill', 'steelblue')
+    .attr('stroke', 'white')
+    .attr('stroke-width', 1)
+    .attr('opacity', 0.8)
+    .each(function (d) {
+      d3.select(this)
+        .append('title')
+        .text(
+          `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`
+        );
+    });
 
     // Function to update circle positions when the map moves/zooms
   function updatePositions() {

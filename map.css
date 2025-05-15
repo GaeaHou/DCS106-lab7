@@ -29,8 +29,9 @@ body {
     z-index: 1;
     pointer-events: none;
   }
-
-  #map svg {
-    background: yellow;
-    opacity: 50%;
+  #map svg circle {
+    fill: steelblue;
+    fill-opacity: 0.6;
+    stroke: white;
+    pointer-events: auto; /* 允许 hover 显示 tooltip */
   }
