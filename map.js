@@ -75,9 +75,9 @@ map.on('load', async () => {
     console.log('Stations with Traffic:', stations.slice(0, 5));
 
     const radiusScale = d3
-      .scaleSqrt()
-      .domain([0, d3.max(stations, d => d.totalTraffic) || 1])
-      .range([2, 25]);
+        .scaleSqrt()
+        .domain([0, d3.max(stations, (d) => d.totalTraffic)])
+        .range([0, 25]);
 
     const circles = svg
       .selectAll('circle')
@@ -89,11 +89,12 @@ map.on('load', async () => {
       .attr('stroke', 'white')
       .attr('stroke-width', 1)
       .attr('opacity', 0.6)
-      .each(function(d) {
+      .each(function (d) {
+        // Add <title> for browser tooltips
         d3.select(this)
           .append('title')
           .text(
-            `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`
+            `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`,
           );
       });
 
