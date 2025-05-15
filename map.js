@@ -26,6 +26,12 @@ const bikeLaneStyle = {
   'line-opacity': 0.6,
 };
 
+function getCoords(station) {
+    const point = new mapboxgl.LngLat(+station.lon, +station.lat); // Convert lon/lat to Mapbox LngLat
+    const { x, y } = map.project(point); // Project to pixel coordinates
+    return { cx: x, cy: y }; // Return as object for use in SVG attributes
+  }
+
 // 地图加载完成后运行
 map.on('load', async () => {
   // 加载波士顿自行车道
@@ -69,15 +75,16 @@ map.on('load', async () => {
 
     const projection = ([lon, lat]) => map.project(new mapboxgl.LngLat(lon, lat));
 
-    svg.selectAll('circle')
-      .data(stations)
-      .enter()
-      .append('circle')
-      .attr('r', 4)
-      .attr('fill', 'blue')
-      .attr('opacity', 0.7)
-      .attr('cx', d => projection([+d.Long, +d.Lat]).x)
-      .attr('cy', d => projection([+d.Long, +d.Lat]).y);
+    const circles = svg
+    .selectAll('circle')
+    .data(stations)
+    .enter()
+    .append('circle')
+    .attr('r', 5) // Radius of the circle
+    .attr('fill', 'steelblue') // Circle fill color
+    .attr('stroke', 'white') // Circle border color
+    .attr('stroke-width', 1) // Circle border thickness
+    .attr('opacity', 0.8); // Circle opacity
 
     // 每次地图移动时更新 SVG circle 的位置
     map.on('move', () => {
