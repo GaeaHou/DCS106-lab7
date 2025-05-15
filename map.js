@@ -25,10 +25,10 @@ const bikeLaneStyle = {
 };
 
 function getCoords(station) {
-  const point = new mapboxgl.LngLat(+station.Long, +station.Lat); // 使用 Long 和 Lat 字段
-  const { x, y } = map.project(point); // Project to pixel coordinates
-  return { cx: x, cy: y }; // Return as object for use in SVG attributes
-}
+    const point = new mapboxgl.LngLat(+station.lon, +station.lat); // Convert lon/lat to Mapbox LngLat
+    const { x, y } = map.project(point); // Project to pixel coordinates
+    return { cx: x, cy: y }; // Return as object for use in SVG attributes
+  }
 
 map.on('load', async () => {
   // 添加 Boston 自行车道数据源
