@@ -1,5 +1,6 @@
 // Import Mapbox as an ESM module
 import mapboxgl from 'https://cdn.jsdelivr.net/npm/mapbox-gl@2.15.0/+esm';
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 // Check that Mapbox GL JS is loaded
 console.log('Mapbox GL JS Loaded:', mapboxgl);
 
@@ -50,4 +51,42 @@ const bikeLaneStyle = {
       source: 'cambridge_route',
       paint: bikeLaneStyle,  // 👈 复用样式
     });
+
+    let jsonData;
+    const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
+    try {
+        jsonData = await d3.json(jsonurl);
+        const stations = jsonData.data.stations;
+        console.log('Stations:', stations);
+    
+        // 获取 SVG 元素
+        const svg = d3.select('#map').select('svg');
+    
+        // 添加圆形标记
+        svg.selectAll('circle')
+          .data(stations)
+          .enter()
+          .append('circle')
+          .attr('r', 5)
+          .attr('fill', 'red')
+          .attr('opacity', 0.7);
+    
+        // 更新圆的位置（每次地图视角变化都需要更新）
+        function updatePositions() {
+          svg.selectAll('circle')
+            .attr('cx', d => map.project([+d.Long, +d.Lat]).x)
+            .attr('cy', d => map.project([+d.Long, +d.Lat]).y);
+        }
+    
+        // 初次渲染
+        updatePositions();
+    
+        // 当地图移动或缩放时更新位置
+        map.on('move', updatePositions);
+        map.on('zoom', updatePositions);
+        map.on('resize', updatePositions);
+    
+      } catch (error) {
+        console.error('Error loading Bluebikes data:', error);
+      }
   });
