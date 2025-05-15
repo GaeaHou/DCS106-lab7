@@ -70,26 +70,58 @@ map.on('load', async () => {
   }
   // Step 3.1: Fetching and parsing the JSON
   const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
+  const trafficUrl = 'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv';
   try {
     const jsonData = await d3.json(jsonurl);
     console.log('Loaded JSON Data:', jsonData);
-  
+    const trips = await d3.csv(trafficUrl);
+    console.log('Loaded traffic data:', trips);
+    
     let stations = jsonData.data.stations;
     console.log('Stations Array:', stations);
 
-  // Append circles to the SVG for each station
-  const circles = svg
+    const departures = d3.rollup(
+        trips,
+        (v) => v.length,
+        (d) => d.start_station_id,
+      );
+      
+      const arrivals = d3.rollup(
+        trips,
+        (v) => v.length,
+        (d) => d.end_station_id,
+      );
+
+        
+    stations = stations.map((station) => {
+        let id = station.short_name;
+        station.arrivals = arrivals.get(id) ?? 0;
+        station.departures = departures.get(id) ?? 0;
+        station.totalTraffic = station.arrivals + station.departures;
+        return station;
+    });
+    
+    console.log('Stations with traffic info:', stations);
+
+    // Step 4.3: Size markers according to traffic
+    const radiusScale = d3
+    .scaleSqrt()
+    .domain([0, d3.max(stations, (d) => d.totalTraffic)])
+    .range([0, 25]);
+
+    // Update circles with new radius based on totalTraffic
+    const circles = svg
     .selectAll('circle')
     .data(stations)
     .enter()
     .append('circle')
-    .attr('r', 5) // Radius of the circle
-    .attr('fill', 'steelblue') // Circle fill color
-    .attr('stroke', 'white') // Circle border color
-    .attr('stroke-width', 1) // Circle border thickness
-    .attr('opacity', 0.8); // Circle opacity
+    .attr('r', (d) => radiusScale(d.totalTraffic)) // variable size
+    .attr('fill', 'steelblue')                    // fill color
+    .attr('stroke', 'white')                      // white border
+    .attr('stroke-width', 1)                      // border thickness
+    .attr('opacity', 0.8);                        // transparency
 
-  // Function to update circle positions when the map moves/zooms
+    // Function to update circle positions when the map moves/zooms
   function updatePositions() {
     circles
       .attr('cx', (d) => getCoords(d).cx) // Set the x-position using projected coordinates
