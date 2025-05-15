@@ -96,7 +96,7 @@ map.on('load', async () => {
           .attr('stroke-width', 1)
           .attr('fill-opacity', 0.6)
           .append('title')
-          .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+          .text(d => `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
 
         // 定义位置更新函数
         function updatePositions() {
