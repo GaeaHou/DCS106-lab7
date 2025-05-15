@@ -19,17 +19,13 @@ body {
 #map {
     position: relative;
     width: 100%;
-    height: 600px; /* 可根据需要调整地图高度 */
+    height: 600px;
   }
-  
-#map svg {
+
+  #map svg {
     position: absolute;
     width: 100%;
     height: 100%;
     z-index: 1;
     pointer-events: none;
-  }
-  
-#map svg circle {
-    pointer-events: auto;
   }

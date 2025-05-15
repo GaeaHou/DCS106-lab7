@@ -1,10 +1,15 @@
+// map.js
+
+// 导入 Mapbox 和 D3
 import mapboxgl from 'https://cdn.jsdelivr.net/npm/mapbox-gl@2.15.0/+esm';
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
 console.log('Mapbox GL JS Loaded:', mapboxgl);
 
+// 设置 Mapbox Access Token
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2FtbGF1OTUiLCJhIjoiY2xzOXZ2NTdqMGFwaDJqcDZ2eDQ0b2w0eSJ9.emlu4JkbjlBBE9bEay1_8A';
 
+// 初始化地图
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/streets-v12',
@@ -14,111 +19,74 @@ const map = new mapboxgl.Map({
   maxZoom: 18,
 });
 
+// 样式对象，供两个图层公用
 const bikeLaneStyle = {
   'line-color': '#32D400',
-  'line-width': 5,
+  'line-width': 4,
   'line-opacity': 0.6,
 };
 
-function getCoords(station) {
-  const point = new mapboxgl.LngLat(+station.lon, +station.lat);
-  const { x, y } = map.project(point);
-  return { cx: x, cy: y };
-}
-
+// 地图加载完成后运行
 map.on('load', async () => {
+  // 加载波士顿自行车道
   map.addSource('boston_route', {
     type: 'geojson',
     data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson',
   });
-
   map.addLayer({
-    id: 'boston-bike-lanes',
+    id: 'bike-lanes-boston',
     type: 'line',
     source: 'boston_route',
     paint: bikeLaneStyle,
   });
 
+  // 加载剑桥自行车道
   map.addSource('cambridge_route', {
     type: 'geojson',
-    data: 'https://raw.githubusercontent.com/cambridgegis/cambridgegis_data/main/Recreation/Bike_Facilities/RECREATION_BikeFacilities.geojson',
+    data: 'https://data.cambridgema.gov/api/geospatial/fgjk-ygqy?method=export&format=GeoJSON',
   });
-
   map.addLayer({
-    id: 'cambridge-bike-lanes',
+    id: 'bike-lanes-cambridge',
     type: 'line',
     source: 'cambridge_route',
     paint: bikeLaneStyle,
   });
-  const container = map.getCanvasContainer();
-  const svg = d3.select(container)
-    .append('svg')
-    .style('position', 'absolute')
-    .style('top', 0)
-    .style('left', 0)
-    .style('width', '100%')
-    .style('height', '100%')
-    .style('pointer-events', 'none');
-  const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
-  const csvUrl = 'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv';
 
+  // 加载 Bluebikes 站点信息
+  const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
   try {
     const jsonData = await d3.json(jsonurl);
-    let stations = jsonData.data.stations;
+    const stations = jsonData.data.stations;
+    console.log('Stations loaded:', stations);
 
-    const trips = await d3.csv(csvUrl);
-    const departures = d3.rollup(trips, v => v.length, d => d.start_station_id);
-    const arrivals = d3.rollup(trips, v => v.length, d => d.end_station_id);
+    // D3 绑定 SVG 层绘制站点标记
+    const svg = d3.select('#map svg')
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .style('position', 'absolute')
+      .style('z-index', 1)
+      .style('pointer-events', 'none');
 
-    stations = stations.map(station => {
-      const id = station.Number;
-      station.departures = departures.get(id) ?? 0;
-      station.arrivals = arrivals.get(id) ?? 0;
-      station.totalTraffic = station.departures + station.arrivals;
-      return station;
-    });
+    const projection = ([lon, lat]) => map.project(new mapboxgl.LngLat(lon, lat));
 
-    console.log('Loaded JSON Data:', jsonData);
-    console.log('Stations with Traffic:', stations.slice(0, 5));
-
-    const radiusScale = d3
-        .scaleSqrt()
-        .domain([0, d3.max(stations, (d) => d.totalTraffic)])
-        .range([0, 25]);
-
-    const circles = svg
-      .selectAll('circle')
+    svg.selectAll('circle')
       .data(stations)
       .enter()
       .append('circle')
-      .attr('r', d => radiusScale(d.totalTraffic || 0))
-      .attr('fill', 'steelblue')
-      .attr('stroke', 'white')
-      .attr('stroke-width', 1)
-      .attr('opacity', 0.6)
-      .each(function (d) {
-        // Add <title> for browser tooltips
-        d3.select(this)
-          .append('title')
-          .text(
-            `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`,
-          );
-      });
+      .attr('r', 4)
+      .attr('fill', 'blue')
+      .attr('opacity', 0.7)
+      .attr('cx', d => projection([+d.Long, +d.Lat]).x)
+      .attr('cy', d => projection([+d.Long, +d.Lat]).y);
 
-    function updatePositions() {
-      circles
-        .attr('cx', d => getCoords(d).cx)
-        .attr('cy', d => getCoords(d).cy);
-    }
-
-    updatePositions();
-
-    map.on('move', updatePositions);
-    map.on('zoom', updatePositions);
-    map.on('resize', updatePositions);
-    map.on('moveend', updatePositions);
+    // 每次地图移动时更新 SVG circle 的位置
+    map.on('move', () => {
+      svg.selectAll('circle')
+        .attr('cx', d => projection([+d.Long, +d.Lat]).x)
+        .attr('cy', d => projection([+d.Long, +d.Lat]).y);
+    });
 
   } catch (error) {
-    console.error('Error loading data:', error);
+    console.error('Error loading station JSON:', error);
   }
 });
