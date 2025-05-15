@@ -17,6 +17,12 @@ const map = new mapboxgl.Map({
   maxZoom: 18, // Maximum allowed zoom
 });
 
+function getCoords(station) {
+    const point = new mapboxgl.LngLat(+station.Long, +station.Lat);
+    const { x, y } = map.project(point);
+    return { cx: x, cy: y };
+  }
+  
 const bikeLaneStyle = {
     'line-color': '#32D400',
     'line-width': 5,
@@ -76,7 +82,7 @@ const bikeLaneStyle = {
 
         // 定义位置更新函数
         function updatePositions() {
-        circles
+          circles
             .attr('cx', (d) => getCoords(d).cx)
             .attr('cy', (d) => getCoords(d).cy);
         }
@@ -88,7 +94,7 @@ const bikeLaneStyle = {
         map.on('zoom', updatePositions);
         map.on('resize', updatePositions);
         map.on('moveend', updatePositions);
-        
+
       } catch (error) {
         console.error('Error loading JSON:', error); // Handle errors
       }
