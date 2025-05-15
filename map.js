@@ -17,19 +17,21 @@ const map = new mapboxgl.Map({
   maxZoom: 18, // Maximum allowed zoom
 });
 
-function getCoords(station) {
-    const point = new mapboxgl.LngLat(+station.Long, +station.Lat);
-    const { x, y } = map.project(point);
-    return { cx: x, cy: y };
-  }
-  
+
+
 const bikeLaneStyle = {
     'line-color': '#32D400',
     'line-width': 5,
     'line-opacity': 0.6,
   };
+
+function getCoords(station) {
+    const point = new mapboxgl.LngLat(+station.lon, +station.lat); // Convert lon/lat to Mapbox LngLat
+    const { x, y } = map.project(point); // Project to pixel coordinates
+    return { cx: x, cy: y }; // Return as object for use in SVG attributes
+  }
   
-  map.on('load', async () => {
+map.on('load', async () => {
     // 添加 Boston 自行车道数据源
     map.addSource('boston_route', {
       type: 'geojson',
