@@ -55,38 +55,15 @@ const bikeLaneStyle = {
     let jsonData;
     const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
     try {
-        jsonData = await d3.json(jsonurl);
-        const stations = jsonData.data.stations;
-        console.log('Stations:', stations);
+        const jsonurl = INPUT_BLUEBIKES_CSV_URL;
     
-        // 获取 SVG 元素
-        const svg = d3.select('#map').select('svg');
+        // Await JSON fetch
+        const jsonData = await d3.json(jsonurl);
     
-        // 添加圆形标记
-        svg.selectAll('circle')
-          .data(stations)
-          .enter()
-          .append('circle')
-          .attr('r', 5)
-          .attr('fill', 'red')
-          .attr('opacity', 0.7);
-    
-        // 更新圆的位置（每次地图视角变化都需要更新）
-        function updatePositions() {
-          svg.selectAll('circle')
-            .attr('cx', d => map.project([+d.Long, +d.Lat]).x)
-            .attr('cy', d => map.project([+d.Long, +d.Lat]).y);
-        }
-    
-        // 初次渲染
-        updatePositions();
-    
-        // 当地图移动或缩放时更新位置
-        map.on('move', updatePositions);
-        map.on('zoom', updatePositions);
-        map.on('resize', updatePositions);
-    
+        console.log('Loaded JSON Data:', jsonData); // Log to verify structure
+        let stations = jsonData.data.stations;
+        console.log('Stations Array:', stations);
       } catch (error) {
-        console.error('Error loading Bluebikes data:', error);
+        console.error('Error loading JSON:', error); // Handle errors
       }
   });
