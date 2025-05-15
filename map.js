@@ -50,10 +50,17 @@ map.on('load', async () => {
     source: 'cambridge_route',
     paint: bikeLaneStyle,
   });
-
+  const container = map.getCanvasContainer();
+  const svg = d3.select(container)
+    .append('svg')
+    .style('position', 'absolute')
+    .style('top', 0)
+    .style('left', 0)
+    .style('width', '100%')
+    .style('height', '100%')
+    .style('pointer-events', 'none');
   const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
   const csvUrl = 'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv';
-  const svg = d3.select('#map').select('svg');
 
   try {
     const jsonData = await d3.json(jsonurl);
