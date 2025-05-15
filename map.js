@@ -94,7 +94,12 @@ map.on('load', async () => {
           .attr('fill', 'steelblue')
           .attr('stroke', 'white')
           .attr('stroke-width', 1)
-          .attr('fill-opacity', 0.6);
+          .attr('fill-opacity', 0.6)
+          .each(function (d) {
+            d3.select(this)
+              .append('title')
+              .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+          });
 
         // 定义位置更新函数
         function updatePositions() {
