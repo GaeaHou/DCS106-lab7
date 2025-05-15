@@ -86,7 +86,7 @@ map.on('load', async () => {
     
         console.log('Loaded JSON Data:', jsonData); // Log to verify structure
           // 添加圆圈到 SVG
-        const circles = svg.selectAll('circle')
+          const circles = svg.selectAll('circle')
           .data(stations)
           .enter()
           .append('circle')
@@ -95,8 +95,11 @@ map.on('load', async () => {
           .attr('stroke', 'white')
           .attr('stroke-width', 1)
           .attr('fill-opacity', 0.6)
-          .append('title')
-          .text(d => `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+          .each(function (d) {
+            d3.select(this)
+              .append('title')
+              .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+          });
 
         // 定义位置更新函数
         function updatePositions() {
