@@ -53,6 +53,7 @@ const bikeLaneStyle = {
     });
 
     let jsonData;
+    const svg = d3.select('#map').select('svg');
     try {
         const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
     
@@ -61,7 +62,33 @@ const bikeLaneStyle = {
     
         console.log('Loaded JSON Data:', jsonData); // Log to verify structure
         let stations = jsonData.data.stations;
-        console.log('Stations Array:', stations);
+          // 添加圆圈到 SVG
+        const circles = svg
+        .selectAll('circle')
+        .data(stations)
+        .enter()
+        .append('circle')
+        .attr('r', 5)
+        .attr('fill', 'steelblue')
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1)
+        .attr('opacity', 0.8);
+
+        // 定义位置更新函数
+        function updatePositions() {
+        circles
+            .attr('cx', (d) => getCoords(d).cx)
+            .attr('cy', (d) => getCoords(d).cy);
+        }
+        // 初始化位置
+        updatePositions();
+
+        // 地图交互时实时更新位置
+        map.on('move', updatePositions);
+        map.on('zoom', updatePositions);
+        map.on('resize', updatePositions);
+        map.on('moveend', updatePositions);
+        
       } catch (error) {
         console.error('Error loading JSON:', error); // Handle errors
       }
