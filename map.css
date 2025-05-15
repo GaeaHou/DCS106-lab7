@@ -31,6 +31,6 @@ body {
   }
   
   #map svg circle {
-    pointer-events: auto; /* 允许鼠标悬停提示 */
+    pointer-events: auto;  /* ✅ 允许每个 circle 响应 hover 以显示 tooltip */
     transition: r 0.2s;
   }

@@ -82,16 +82,24 @@ map.on('load', async () => {
     
         console.log('Loaded JSON Data:', jsonData); // Log to verify structure
           // 添加圆圈到 SVG
+        // 1. 创建比例尺：将 totalTraffic 映射到圆半径
+        const radiusScale = d3.scaleSqrt()
+        .domain([0, d3.max(stations, d => d.totalTraffic)])
+        .range([0, 25]);
+
+        // 2. 画圆 + tooltip
         const circles = svg
         .selectAll('circle')
         .data(stations)
         .enter()
         .append('circle')
-        .attr('r', 5)
+        .attr('r', d => radiusScale(d.totalTraffic))  // ✅ 使用比例尺动态设置半径
         .attr('fill', 'steelblue')
         .attr('stroke', 'white')
         .attr('stroke-width', 1)
-        .attr('opacity', 0.8);
+        .attr('fill-opacity', 0.6)
+        .append('title')  // ✅ 给每个 <circle> 添加 tooltip
+        .text(d => `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
 
         // 定义位置更新函数
         function updatePositions() {
