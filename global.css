@@ -38,29 +38,20 @@ body {
     border-radius: 50%;
     border: 1px solid #ccc;
   }
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;  /* 左右贴边 */
-    align-items: center;
-    max-width: 80em;               /* 和地图宽度一致 */
-    margin: 0 auto;                  /* 水平居中这个区域 */
+  .main-title {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80em;
     padding: 1rem;
   }
   
-  .page-header h1 {
-    margin: 0;
-  }
-  
-  .slider-group {
+  .time-filter {
+    max-width: 80em;
+    margin: 0 auto;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: 0.5rem;
-    justify-content: flex-end;  /* ✅ 加这个：让内部内容靠右对齐 */
-    flex: 1; 
-  }
-  
-  #any-time {
-    color: gray;
-    font-style: italic;
+    padding: 0 1rem;
   }

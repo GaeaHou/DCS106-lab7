@@ -15,15 +15,14 @@
     <script src="map.js" type="module"></script>
   </head>
   <body>
-    <header class="page-header">
-        <h1>🚴🏼‍♀️ Bikewatching</h1>
-        <div class="slider-group">
-          <label for="time-slider">Filter by time:</label>
-          <input type="range" id="time-slider" min="-1" max="1439" value="-1" />
-          <time id="selected-time"></time>
-          <em id="any-time">(any time)</em>
-        </div>
-      </header>
+    <h1>🚴🏼‍♀️ Bikewatching</h1>
+    <!-- 独立滑块区域，右对齐 -->
+    <div class="time-filter">
+        <label for="time-slider">Filter by time:</label>
+        <input type="range" id="time-slider" min="-1" max="1439" value="-1" />
+        <time id="selected-time"></time>
+        <em id="any-time">(any time)</em>
+    </div>
 
     <div id="map">
       <svg></svg>
