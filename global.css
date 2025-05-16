@@ -8,3 +8,33 @@ body {
     margin: auto;
     padding: 1em;
   }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+    margin-block: 1.5em;
+    font-size: 0.9em;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    --color-departures: steelblue;
+    --color-arrivals: darkorange;
+    --color: color-mix(
+      in oklch,
+      var(--color-departures) calc(100% * var(--departure-ratio)),
+      var(--color-arrivals)
+    );
+  }
+  
+  .legend-item .swatch {
+    width: 1em;
+    height: 1em;
+    background: var(--color);
+    border-radius: 50%;
+    border: 1px solid #ccc;
+  }
