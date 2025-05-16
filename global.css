@@ -38,3 +38,28 @@ body {
     border-radius: 50%;
     border: 1px solid #ccc;
   }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1rem 2rem;
+    font-family: sans-serif;
+  }
+  
+  .page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .slider-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  #selected-time,
+  #any-time {
+    display: block;
+    font-weight: bold;
+  }
