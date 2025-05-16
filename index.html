@@ -15,17 +15,15 @@
     <script src="map.js" type="module"></script>
   </head>
   <body>
-    <header class="top-bar">
+    <div class="top-bar">
         <h1>🚴🏼‍♀️ Bikewatching</h1>
         <div class="slider-group">
           <label for="time-slider">Filter by time:</label>
           <input type="range" id="time-slider" min="-1" max="1440" step="5" value="-1" />
-          <div class="time-display">
-            <time id="selected-time"></time>
-            <em id="any-time">(any time)</em>
-          </div>
+          <time id="selected-time"></time>
+          <em id="any-time">(any time)</em>
         </div>
-      </header>
+      </div>
 
     <div id="map">
       <svg></svg>
