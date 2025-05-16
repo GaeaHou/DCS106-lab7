@@ -39,13 +39,17 @@ body {
     border: 1px solid #ccc;
   }
 
-  .top-bar {
-    max-width: 1000px; /* 和地图一致 */
-    margin: 1rem auto;
-    padding: 0 1rem;
+  .page-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between;  /* 左右贴边 */
     align-items: center;
+    max-width: 80em;               /* 和地图宽度一致 */
+    margin: 0 auto;                  /* 水平居中这个区域 */
+    padding: 1rem;
+  }
+  
+  .page-header h1 {
+    margin: 0;
   }
   
   .slider-group {
@@ -54,11 +58,7 @@ body {
     gap: 0.5rem;
   }
   
-  #selected-time {
-    font-weight: bold;
-  }
-  
   #any-time {
-    font-style: italic;
     color: gray;
+    font-style: italic;
   }
