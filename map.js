@@ -67,7 +67,6 @@ function filterByMinute(tripsByMinute, minute) {
   const stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]);
 
 
-// Step 2.1: Modify map.js to Wait for the Map to Load Before Adding Data
 map.on('load', async () => {
   // Adding the Data Source with addSource:
   map.addSource('boston_route', {
@@ -86,17 +85,6 @@ map.on('load', async () => {
       'line-opacity': 0.4,
     },
   });
-
-  // Step 2.2: Styling and Customization (alternative style example)
-  /*
-  paint: {
-    'line-color': '#32D400',
-    'line-width': 5,
-    'line-opacity': 0.6
-  }
-  */
-
-  // Step 2.3: Adding Cambridge bike lanes
   map.addSource('cambridge_route', {
     type: 'geojson',
     data: 'https://raw.githubusercontent.com/cambridgegis/cambridgegis_data/main/Recreation/Bike_Facilities/RECREATION_BikeFacilities.geojson',
@@ -223,7 +211,7 @@ map.on('load', async () => {
       )
       .each(function (d) {
         d3.select(this)
-          .select('title').remove(); // 先清理旧的
+          .select('title').remove(); 
         d3.select(this)
           .append('title')
           .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);

@@ -32,7 +32,7 @@ body {
   #map svg circle {
     fill-opacity: 0.6;
     stroke: white;
-    pointer-events: auto; /* 允许 hover 显示 tooltip */
+    pointer-events: auto; 
   }
 
   #time-slider {
