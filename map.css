@@ -39,3 +39,31 @@ body {
   #time-slider {
     width: 300px;
   }
+
+  #map circle,
+.legend > div {
+  --color-departures: steelblue;
+  --color-arrivals: darkorange;
+  --color: color-mix(
+    in oklch,
+    var(--color-departures) calc(100% * var(--departure-ratio)),
+    var(--color-arrivals)
+  );
+  fill: var(--color);
+}
+
+.legend {
+    display: flex;
+    margin-block: 1rem;
+    gap: 4px;
+  }
+  
+  .legend > div {
+    flex: 1;
+    padding: 0.25rem 1rem;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    background: var(--color);
+  }

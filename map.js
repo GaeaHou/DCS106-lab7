@@ -64,6 +64,9 @@ function filterByMinute(tripsByMinute, minute) {
     }
   }
 
+  const stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]);
+
+
 // Step 2.1: Modify map.js to Wait for the Map to Load Before Adding Data
 map.on('load', async () => {
   // Adding the Data Source with addSource:
@@ -216,6 +219,9 @@ map.on('load', async () => {
       .attr('stroke', 'white')
       .attr('stroke-width', 1)
       .attr('opacity', 0.8)
+      .style('--departure-ratio', (d) =>
+        stationFlow(d.totalTraffic === 0 ? 0.5 : d.departures / d.totalTraffic)
+      )
       .each(function (d) {
         d3.select(this)
           .select('title').remove(); // 先清理旧的
