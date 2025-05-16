@@ -25,14 +25,14 @@ function formatTime(minutes) {
 }
 
 
-function computeStationTraffic(stations, trips) {
+function computeStationTraffic(stations, timeFilter = -1) {
     const departures = d3.rollup(
-      trips,
+      filterByMinute(departuresByMinute, timeFilter),
       (v) => v.length,
       (d) => d.start_station_id
     );
     const arrivals = d3.rollup(
-      trips,
+      filterByMinute(arrivalsByMinute, timeFilter),
       (v) => v.length,
       (d) => d.end_station_id
     );
@@ -49,18 +49,21 @@ function computeStationTraffic(stations, trips) {
     return date.getHours() * 60 + date.getMinutes();
   }
   
-  function filterTripsbyTime(trips, timeFilter) {
-    return timeFilter === -1
-      ? trips
-      : trips.filter((trip) => {
-          const startedMinutes = minutesSinceMidnight(trip.started_at);
-          const endedMinutes = minutesSinceMidnight(trip.ended_at);
-          return (
-            Math.abs(startedMinutes - timeFilter) <= 60 ||
-            Math.abs(endedMinutes - timeFilter) <= 60
-          );
-        });
+
+let departuresByMinute = Array.from({ length: 1440 }, () => []);
+let arrivalsByMinute = Array.from({ length: 1440 }, () => []);
+
+function filterByMinute(tripsByMinute, minute) {
+    if (minute === -1) return tripsByMinute.flat();
+    let minMinute = (minute - 60 + 1440) % 1440;
+    let maxMinute = (minute + 60) % 1440;
+    if (minMinute > maxMinute) {
+      return tripsByMinute.slice(minMinute).concat(tripsByMinute.slice(0, maxMinute)).flat();
+    } else {
+      return tripsByMinute.slice(minMinute, maxMinute).flat();
+    }
   }
+
 // Step 2.1: Modify map.js to Wait for the Map to Load Before Adding Data
 map.on('load', async () => {
   // Adding the Data Source with addSource:
@@ -121,31 +124,21 @@ map.on('load', async () => {
     let trips = await d3.csv(
         'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv',
         (trip) => {
-          trip.started_at = new Date(trip.started_at);
-          trip.ended_at = new Date(trip.ended_at);
-          return trip;
+            trip.started_at = new Date(trip.started_at);
+            trip.ended_at = new Date(trip.ended_at);
+            const startedMinutes = minutesSinceMidnight(trip.started_at);
+            const endedMinutes = minutesSinceMidnight(trip.ended_at);
+            departuresByMinute[startedMinutes].push(trip);
+            arrivalsByMinute[endedMinutes].push(trip);
+            return trip;
         }
       );
+
     console.log('Loaded traffic data:', trips);
     
-    let stations = computeStationTraffic(jsonData.data.stations, trips);
+    let stations = computeStationTraffic(jsonData.data.stations);
     console.log('Stations Array:', stations);
 
-    const departures = d3.rollup(
-        trips,
-        (v) => v.length,
-        (d) => d.start_station_id,
-      );
-      
-      const arrivals = d3.rollup(
-        trips,
-        (v) => v.length,
-        (d) => d.end_station_id,
-      );
-
-        
-    
-    console.log('Stations with traffic info:', stations);
 
     // Step 4.3: Size markers according to traffic
     const radiusScale = d3
@@ -209,8 +202,7 @@ map.on('load', async () => {
   timeSlider.addEventListener('input', updateTimeDisplay);
   updateTimeDisplay(); // Initialize once
   function updateScatterPlot(timeFilter) {
-    const filteredTrips = filterTripsbyTime(trips, timeFilter);
-    const filteredStations = computeStationTraffic(stations, filteredTrips);
+    const filteredStations = computeStationTraffic(stations, timeFilter);
     timeFilter === -1
       ? radiusScale.range([0, 25])
       : radiusScale.range([3, 50]);
@@ -224,9 +216,13 @@ map.on('load', async () => {
       .attr('stroke', 'white')
       .attr('stroke-width', 1)
       .attr('opacity', 0.8)
-      .attr('title', (d) =>
-        `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`
-      );
+      .each(function (d) {
+        d3.select(this)
+          .select('title').remove(); // 先清理旧的
+        d3.select(this)
+          .append('title')
+          .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+      });
   
     updatePositions();
   }
