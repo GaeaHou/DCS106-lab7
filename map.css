@@ -30,7 +30,6 @@ body {
     pointer-events: none;
   }
   #map svg circle {
-    fill: steelblue;
     fill-opacity: 0.6;
     stroke: white;
     pointer-events: auto; /* 允许 hover 显示 tooltip */
@@ -67,4 +66,39 @@ body {
     font-weight: bold;
     border-radius: 4px;
     background: var(--color);
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5em;
+    margin-top: 1rem;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+  
+  .legend-label {
+    font-weight: bold;
+    color: gray;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    --color-departures: steelblue;
+    --color-arrivals: darkorange;
+    --color: color-mix(
+      in oklch,
+      var(--color-departures) calc(100% * var(--departure-ratio)),
+      var(--color-arrivals)
+    );
+  }
+  
+  .legend-item .dot {
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 50%;
+    background: var(--color);
+    display: inline-block;
   }
