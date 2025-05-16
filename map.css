@@ -40,7 +40,8 @@ body {
     width: 300px;
   }
 
-  #map circle {
+  #map circle,
+  .legend > div {
     --color-departures: steelblue;
     --color-arrivals: darkorange;
     --color: color-mix(
@@ -49,6 +50,7 @@ body {
       var(--color-arrivals)
     );
     fill: var(--color);
+    background: var(--color); /* for legend blocks */
   }
 
 .legend {
