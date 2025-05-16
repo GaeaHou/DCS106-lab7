@@ -35,3 +35,7 @@ body {
     stroke: white;
     pointer-events: auto; /* 允许 hover 显示 tooltip */
   }
+
+  #time-slider {
+    width: 300px;
+  }

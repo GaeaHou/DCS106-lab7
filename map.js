@@ -17,6 +17,13 @@ const map = new mapboxgl.Map({
   maxZoom: 18, // Maximum allowed zoom
 });
 
+let timeFilter = -1;
+
+function formatTime(minutes) {
+  const date = new Date(0, 0, 0, 0, minutes);
+  return date.toLocaleString('en-US', { timeStyle: 'short' });
+}
+
 // Step 2.1: Modify map.js to Wait for the Map to Load Before Adding Data
 map.on('load', async () => {
   // Adding the Data Source with addSource:
@@ -144,6 +151,27 @@ map.on('load', async () => {
   map.on('zoom', updatePositions);     // Update during zooming
   map.on('resize', updatePositions);   // Update on window resize
   map.on('moveend', updatePositions);  // Final adjustment after movement ends
+  const timeSlider = document.getElementById('time-slider');
+  const selectedTime = document.getElementById('selected-time');
+  const anyTimeLabel = document.getElementById('any-time');
+  
+  function updateTimeDisplay() {
+    timeFilter = Number(timeSlider.value);
+  
+    if (timeFilter === -1) {
+      selectedTime.textContent = '';
+      anyTimeLabel.style.display = 'block';
+    } else {
+      selectedTime.textContent = formatTime(timeFilter);
+      anyTimeLabel.style.display = 'none';
+    }
+  
+    // Filtering logic will be added in Step 5.3
+  }
+  
+  timeSlider.addEventListener('input', updateTimeDisplay);
+  updateTimeDisplay(); // Initialize once
+
   } catch (error) {
     console.error('Error loading JSON:', error); // Handle errors
   }
