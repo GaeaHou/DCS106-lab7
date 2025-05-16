@@ -144,13 +144,6 @@ map.on('load', async () => {
       );
 
         
-    stations = stations.map((station) => {
-        let id = station.short_name;
-        station.arrivals = arrivals.get(id) ?? 0;
-        station.departures = departures.get(id) ?? 0;
-        station.totalTraffic = station.arrivals + station.departures;
-        return station;
-    });
     
     console.log('Stations with traffic info:', stations);
 
@@ -161,7 +154,7 @@ map.on('load', async () => {
     .range([0, 25]);
 
     // Update circles with new radius based on totalTraffic
-    const circles = svg
+    let circles = svg
     .selectAll('circle')
     .data(stations, (d) => d.short_name)
     .enter()
